@@ -1,25 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import React, { useEffect, useState } from 'react';
+import Button from '@mui/material/Button';
+import VideoList from './api/VideoList';
+import { getList } from './api/getVideos'
 
-function App() {
+
+export default function MyApp() {
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    getList()
+      .then(items => {
+        if (mounted) {
+          setList(items)
+        }
+      })
+    return () => mounted = false;
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Button variant="contained">Hello World</Button>
+      <ul>
+        {list.map(item => <li>{item.name} {item.size}</li>)}
+      </ul>
     </div>
   );
 }
-
-export default App;
