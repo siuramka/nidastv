@@ -22,7 +22,7 @@ export function VideoCard(props) {
             color="text.primary"
             sx={{ color: 'text.tertiary' }}>
             <CardContent>
-                <Typography>{title}</Typography>
+            <Typography sx={{fontSize: 'md'}}>{title}</Typography>
                 <Typography fontWeight="lg" variant="body2" color="text.secondary">
                     Nidas
                 </Typography>
