@@ -20,6 +20,7 @@ export function VideoGrid() {
     getList()
       .then(items => {
         if (mounted) {
+          items = items.reverse()
           setList(items)
           setIsLoading(false);
         }
