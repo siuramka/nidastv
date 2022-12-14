@@ -26,7 +26,7 @@ export default function MyApp() {
         <Layout>
           <Routes>
               <Route exact path="/" element={<VideoGrid/>}/>
-              {/* <Route path="*" element={<>none</>} /> */}
+              <Route path="*" element={<>none</>} />
               <Route path="/vod/:path" element={<StreamVod/>}/>
           </Routes>
         </Layout>

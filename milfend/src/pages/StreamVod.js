@@ -1,20 +1,30 @@
 import React from 'react'
-import ReactPlayer from 'react-player'
 import { useParams } from 'react-router-dom';
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-//don't have safari to test this so prolly don work bro
-// didint work w ipad user agent or smt
+import { useEffect, useRef } from 'react';
+import Hls from 'hls.js'
 export function StreamVod() {
-    let { path } = useParams();
-    //Enables HLS for non safari users only
-    const config = {
-        file: {
-          forceHLS: !isSafari
-        }
+  const {path} = useParams();
+  const mounted = useRef(false);
+  let url = "https://cloud.nidas.tv/hls/"+ path + ".av1" +"/output.m3u8"
+  useEffect(() => {
+    mounted.current = true;
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        console.log(url)
+        const video = document.getElementById('my-video');
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play();
+        });
       }
-    return (
-         <ReactPlayer config={config} controls={true} url={"https://cloud.nidas.tv/hls/"+ path + ".av1" +"/output.m3u8"} />
-    );
-}
+    return () => {
+        mounted.current = false;
+    };
+}, []);
 
+  return mounted ? (
+    <video id="my-video" controls />
+  ):(null);
+}
 // /https://github.com/CookPete/react-player/issues/699 IOS HLS fix but lmao fuck apple users fr fr
