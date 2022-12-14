@@ -7,7 +7,7 @@ import Link from '@mui/material/Link'
 import { CardActionArea } from '@mui/material';
 
 export function VideoCard(props) {
-    const { thumbnail, title } = props;
+    const { thumbnail, title, url } = props;
   return (
     <Card sx={{ maxWidth: 300 }}>
       <CardActionArea url="lol">
@@ -18,7 +18,7 @@ export function VideoCard(props) {
         />
         <Link overlay
             underline="none"
-            href="#interactive-card"
+            href={"/vod/" + url}
             color="text.primary"
             sx={{ color: 'text.tertiary' }}>
             <CardContent>

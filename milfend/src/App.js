@@ -12,6 +12,7 @@ import {
   Routes,
 } from "react-router-dom";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { VideoPlayer } from './components/VideoPlayer';
 
 const darkTheme = createTheme({
   palette: {
@@ -24,9 +25,13 @@ export default function MyApp() {
     <ThemeProvider theme={darkTheme}>
         <Layout>
           <Routes>
-              <Route exact path="/test" element={<VideoGrid/>}/>
+              <Route exact path="/" element={<VideoGrid/>}/>
           </Routes>
         </Layout>
+        <Routes>
+              <Route exact path="/vod/:path" element={<VideoPlayer/>}/>
+        </Routes>
+        {/* <Route path="*" element={<NoMatch />} /> */}
     </ThemeProvider>
   );
 }

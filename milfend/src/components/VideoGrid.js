@@ -9,8 +9,7 @@ import { VideoCard } from '../components/VideoCard'
 import React, { useEffect, useState } from 'react';
 import { getList } from '../api/getVideos'
 const apiUrl = "https://cloud.nidas.tv/thumb.php?vod="
-
-
+const apiStreamUrl = "https://cloud.nidas.tv/hls/"
 export function VideoGrid() {
   const [isLoading, setIsLoading] = useState(false);
   const [list, setList] = useState([]);
@@ -31,7 +30,7 @@ export function VideoGrid() {
     <Grid container spacing={{ xs: 2, md: 5 }} columns={{ xs: 1, sm: 8, md: 16 }}>
       {list.map((item, index) => (
         <Grid item xs={1} sm={4} md={4} key={index}>
-          <VideoCard title={item.name} thumbnail={apiUrl + item.name}></VideoCard>
+          <VideoCard title={item.name} thumbnail={apiUrl + item.name} url={ item.name.substr(0, item.name.length-4) }></VideoCard>
         </Grid>
       ))}
     </Grid>
