@@ -12,7 +12,7 @@ import {
   Routes,
 } from "react-router-dom";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { VideoPlayer } from './components/VideoPlayer';
+import { StreamVod } from './pages/StreamVod';
 
 const darkTheme = createTheme({
   palette: {
@@ -26,12 +26,13 @@ export default function MyApp() {
         <Layout>
           <Routes>
               <Route exact path="/" element={<VideoGrid/>}/>
+              {/* <Route path="*" element={<>none</>} /> */}
+              <Route path="/vod/:path" element={<StreamVod/>}/>
           </Routes>
         </Layout>
         <Routes>
-              <Route exact path="/vod/:path" element={<VideoPlayer/>}/>
         </Routes>
-        {/* <Route path="*" element={<NoMatch />} /> */}
     </ThemeProvider>
   );
 }
+//check if vod exists

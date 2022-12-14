@@ -4,8 +4,7 @@ import { useParams } from 'react-router-dom';
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 //don't have safari to test this so prolly don work bro
 // didint work w ipad user agent or smt
-
-export function VideoPlayer() {
+export function StreamVod() {
     let { path } = useParams();
     //Enables HLS for non safari users only
     const config = {
@@ -14,7 +13,7 @@ export function VideoPlayer() {
         }
       }
     return (
-        <ReactPlayer config={config} controls={true} url={"https://cloud.nidas.tv/hls/"+ path + ".av1" +"/output.m3u8"} />
+         <ReactPlayer config={config} controls={true} url={"https://cloud.nidas.tv/hls/"+ path + ".av1" +"/output.m3u8"} />
     );
 }
 

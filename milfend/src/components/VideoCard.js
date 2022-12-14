@@ -9,27 +9,27 @@ import { CardActionArea } from '@mui/material';
 export function VideoCard(props) {
     const { thumbnail, title, url } = props;
   return (
+  <Link overlay
+      underline="none"
+      href={"/vod/" + url}
+      color="text.primary"
+      sx={{ color: 'text.tertiary' }}>
     <Card sx={{ maxWidth: 300 }}>
-      <CardActionArea url="lol">
+      <CardActionArea>
         <CardMedia
           component="img"
           height="100"
           image={thumbnail}
         />
-        <Link overlay
-            underline="none"
-            href={"/vod/" + url}
-            color="text.primary"
-            sx={{ color: 'text.tertiary' }}>
             <CardContent>
             <Typography sx={{fontSize: 'md'}}>{title}</Typography>
                 <Typography fontWeight="lg" variant="body2" color="text.secondary">
                     Nidas
                 </Typography>
             </CardContent>
-        </Link>
       </CardActionArea>
     </Card>
+        </Link>
   );
 }
 //font weight dun work
