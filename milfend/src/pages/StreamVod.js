@@ -10,10 +10,9 @@ import IconButton from '@mui/material/IconButton';
 export function StreamVod() {
   const { path } = useParams();
   const [error, setError] = useState(true)
-  const [currentTime1, setCurrentTime1] = useState('0');
+  const [currentVideoTimeConst, setCurrentVideoTimeConst] = useState('0');
   const [lastIndex, setLastIndex] = useState(0);
-  const chatMessagesCount = 10
-  const [lastIndexEnd, setLastIndexEnd] = useState(chatMessagesCount);
+  const [lastJsonTimeEntry, setLastJsonTimeEntry] = useState(0);
   const [filteredC, setFilteredC] = useState([]);
   const chat = useRef([])
   const videoRef = useRef();
@@ -23,22 +22,20 @@ export function StreamVod() {
 
   const timeUpdate = (event) => {
     const currentTime = event.target.currentTime
-    setCurrentTime1(currentTime);
-    if(currentTime >= lastIndexEnd){
-      setLastIndexEnd(lastIndexEnd+chatMessagesCount)
-      setLastIndex(lastIndex+chatMessagesCount)
-    }
- 
+    setCurrentVideoTimeConst(currentTime);
+    const roundedTime = Math.round(currentTime)
+    if(lastIndex != roundedTime)
+      setLastIndex(roundedTime)
   }
 
   const seekedUpdate = (event) => {
     const currentTime = event.target.currentTime
 
     setFilteredC([])
+    const roundedTime = Math.round(currentTime)
+    if(lastIndex != roundedTime)
+      setLastIndex(roundedTime)
 
-    setCurrentTime1(currentTime);//need this ?
-    setLastIndexEnd(currentTime+chatMessagesCount)
-    setLastIndex(currentTime)
   }
   var loadVid = function () {
     if (Hls.isSupported()) {
@@ -62,25 +59,21 @@ export function StreamVod() {
   }, []);
 
   useEffect(() => {
-    console.log(lastIndex+ " state changed " + lastIndexEnd)
-    const fl = filteredComments()
-    console.log(fl)
-    //filteredC max lenth, remove top
-    setFilteredC([...filteredC, ...fl])
-},[lastIndex, lastIndexEnd]) // here put the parameter to listen
+    const fl = chat.current.filter((entr) => entr.time == lastIndex)
+    if(fl != null){
+      setFilteredC([...filteredC, ...fl])
+    }
+    ///append to list
+    setLastJsonTimeEntry(fl.time)
+},[lastIndex]) // here put the parameter to listen
 
-  const filteredComments = () => {
-    return chat.current.filter((comment) => (comment.time <= lastIndexEnd && comment.time >= lastIndex ));
-  };
 
     //FixedSizeList
   return (<>
     <><div>
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {filteredC.map((value) => (
-        <ListItem
-          key={value.time}
-        >
+      {filteredC.map((value, index) => (
+        <ListItem key={value.time+index}>
           <ListItemText primary={`${value.user_name}: ${value.message}`} />
         </ListItem>
       ))}
