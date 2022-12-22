@@ -22,6 +22,7 @@ export function StreamVod() {
   const chat = useRef([])
   const emojiList = useRef([])
   const videoRef = useRef();
+  const bottomChatRef = useRef(null)
   let url = "https://cloud.nidas.tv/hls/" + path + ".av1" + "/output.m3u8"
   let url_ios = "https://cloud.nidas.tv/hls/" + path + ".av1" + "/output.m3u8"
 
@@ -116,6 +117,11 @@ export function StreamVod() {
     }
 
   }, [videoTimeSeconds]) // here put the parameter to listen
+
+  useEffect(() =>{
+    bottomChatRef.current?.scrollIntoView({behavior: 'auto'});
+  },[parsedChat])
+  
   // preload images ?? 
   return (
     <Grid container spacing={2}>
@@ -140,6 +146,7 @@ export function StreamVod() {
           {parsedChat.map((value, index) => (
             <ListItem key={index} sx={{ pl:0, fontSize:14, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>{value}</ListItem>
           ))}
+          <ListItem key={"bottom"} ref={bottomChatRef}></ListItem>
         </List>
       </Grid>
     </Grid>
