@@ -4,9 +4,10 @@ export default function Layout(props) {
     return (
         <>
             <CssBaseline />
-            <Container>
-                {props.children}
-            </Container>
+            {props.children}
+            {/* <Container>
+                
+            </Container> */}
         </>
     );
   }

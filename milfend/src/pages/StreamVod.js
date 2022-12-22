@@ -3,18 +3,24 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import Hls from 'hls.js'
 import { getChat } from '../api/getChat'
+import { get7TVEmotes } from '../api/get7TVEmotes'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
+import { Box } from '@mui/system';
+import { CardMedia, Grid } from '@mui/material';
+let admins = require('../api/testChat.json');
+
+
+
 export function StreamVod() {
   const { path } = useParams();
   const [error, setError] = useState(true)
-  const [currentVideoTimeConst, setCurrentVideoTimeConst] = useState('0');
-  const [lastIndex, setLastIndex] = useState(0);
-  const [lastJsonTimeEntry, setLastJsonTimeEntry] = useState(0);
-  const [filteredC, setFilteredC] = useState([]);
+  const [videoTimeSeconds, setVideoTimeSeconds] = useState(0);
+  const [parsedChat, setParsedChat] = useState([])
   const chat = useRef([])
+  const emojiList = useRef([])
   const videoRef = useRef();
   let url = "https://cloud.nidas.tv/hls/" + path + ".av1" + "/output.m3u8"
   let url_ios = "https://cloud.nidas.tv/hls/" + path + ".av1" + "/output.m3u8"
@@ -22,19 +28,18 @@ export function StreamVod() {
 
   const timeUpdate = (event) => {
     const currentTime = event.target.currentTime
-    setCurrentVideoTimeConst(currentTime);
-    const roundedTime = Math.round(currentTime)
-    if(lastIndex != roundedTime)
-      setLastIndex(roundedTime)
+    const seconds = Math.round(currentTime)
+    if (videoTimeSeconds != seconds)
+      setVideoTimeSeconds(seconds)
   }
 
   const seekedUpdate = (event) => {
     const currentTime = event.target.currentTime
 
-    setFilteredC([])
-    const roundedTime = Math.round(currentTime)
-    if(lastIndex != roundedTime)
-      setLastIndex(roundedTime)
+    setParsedChat([])
+    const seconds = Math.round(currentTime)
+    if (videoTimeSeconds != seconds)
+      setVideoTimeSeconds(seconds)
 
   }
   var loadVid = function () {
@@ -50,37 +55,95 @@ export function StreamVod() {
     }
   }
 
+  //initial load
   useEffect(() => {
     getChat()
       .then(items => {
-        chat.current = items
+        chat.current = admins
+      })
+    get7TVEmotes()
+      .then(items => {
+        emojiList.current = items
       })
     loadVid()
   }, []);
 
+  const getEmojiFromName = (name) => {
+    return emojiList.current.find((emoji) => emoji.name === name)
+  }
+
+
+  //do: when twitch inserts image they combine words into single element while no emoji present 
+  // https://u//uixweb.netlify.app/ definitely not the T's front end
+
+  const getChatMessageComponents = (chatObject) => {
+    const words = chatObject.message.split(' ')
+    return words.map(word => {
+      let foundEmoji = getEmojiFromName(word)
+      if (foundEmoji != null) {
+        return (
+          //ie emoji changes line height 
+          //stonko FIX THIS 
+          <Box sx={{ pr: 0.5 }} > 
+            <img width={32} height={32} src={foundEmoji.urls[0][1]}></img>
+          </Box>
+        )
+      } else {
+        return <Box sx={{ pr: 0.5 }}>{word}</Box>
+      }
+    });
+  }
+
+  const getChatComponents = (chatObjectArray) => {
+    return chatObjectArray.map(chatEntry => {
+      const usernameComponent = getChatUsernameComponent(chatEntry)
+      const messageComponents = getChatMessageComponents(chatEntry)
+      return [usernameComponent, ...messageComponents]
+    });
+  }
+
+
+  const getChatUsernameComponent = (chatObject) => {
+    let name = chatObject.user_name
+    let nameColor = chatObject.user_color
+    return (<Box sx={{ pr: 0.5 }} color={nameColor}>{name}:</Box>)
+  }
+  //for chat
   useEffect(() => {
-    const fl = chat.current.filter((entr) => entr.time == lastIndex)
-    if(fl != null){
-      setFilteredC([...filteredC, ...fl])
+    const currentChatMessages = chat.current.filter((entr) => entr.time == videoTimeSeconds)
+    if (currentChatMessages.length > 0) {
+      setParsedChat([...parsedChat, ...getChatComponents(currentChatMessages)])
     }
-    ///append to list
-    setLastJsonTimeEntry(fl.time)
-},[lastIndex]) // here put the parameter to listen
 
-
-    //FixedSizeList
-  return (<>
-    <><div>
-    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      {filteredC.map((value, index) => (
-        <ListItem key={value.time+index}>
-          <ListItemText primary={`${value.user_name}: ${value.message}`} />
-        </ListItem>
-      ))}
-    </List>
-    </div></>
-    <video ref={videoRef} width={1000} onSeeked={(event) => {(seekedUpdate(event))}} onTimeUpdate={(event) => { timeUpdate(event) }} controls />
-  </>)
+  }, [videoTimeSeconds]) // here put the parameter to listen
+  // preload images ?? 
+  return (
+    <Grid container spacing={2}>
+      <Grid item lg={10}>
+        <CardMedia
+          ref={videoRef}
+          component="video"
+          onSeeked={(event) => { (seekedUpdate(event)) }}
+          onTimeUpdate={(event) => { timeUpdate(event) }}
+          controls
+        />
+      </Grid>
+      <Grid item lg={2}>
+        <List sx={{
+          display: 'flex',
+          position: 'relative',
+          flexDirection: 'column',
+          maxWidth: 'auto',
+          maxHeight: '100vh',//why tf 100% doesnt do the same
+          overflow: 'auto'
+        }}>
+          {parsedChat.map((value, index) => (
+            <ListItem key={index} sx={{ pl:0, fontSize:14, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>{value}</ListItem>
+          ))}
+        </List>
+      </Grid>
+    </Grid>
+  )
 }
-//onSeeked
-// /https://github.com/CookPete/react-player/issues/699 IOS HLS fix but lmao fuck apple users fr fr
+
+//https://github.com/video-dev/hls.js/issues/4354
