@@ -1,9 +1,10 @@
 const express = require("express");
 const axios = require("axios");
 const redis = require("redis");
+var cors = require("cors");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 let redisClient;
 
@@ -133,7 +134,7 @@ async function get7TVEmojiData(req, res) {
     res.status(404).send();
   }
 }
-
+app.use(cors())
 app.get("/7tv", get7TVEmojiData);
 app.get("/twitch/emoji/global", getTwitchEmojiGlobalData);
 app.get("/twitch/emoji/subscriber", getTwitchEmojiSubscriberData);
