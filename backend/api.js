@@ -53,7 +53,7 @@ async function getTwitchEmojiSubscriberData(req, res) {
       isCached = true
       results = JSON.parse(cacheResults)
     } else {
-      results = await fetchTwitchEmojisGlobal()
+      results = await fetchTwitchEmojisSubscriber()
       if (results.length === 0) {
         throw "Empty Twitch API response"
       }
