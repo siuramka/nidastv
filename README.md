@@ -1,3 +1,1 @@
-W
-L
-aa
+# Frontend for Twitch broadcast archiving
