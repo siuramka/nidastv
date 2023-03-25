@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import Hls from 'hls.js'
 import { getChat } from '../api/getChat'
 import { get7TVEmotes } from '../api/get7TVEmotes'
+import { getTwitchEmotes } from '../api/getTwitchEmotes'
+import { getTwitchSubscriberEmotes } from '../api/getTwitchSubscriberEmotes'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -11,8 +13,6 @@ import IconButton from '@mui/material/IconButton';
 import { Box } from '@mui/system';
 import { CardMedia, Grid } from '@mui/material';
 let admins = require('../api/testChat.json');
-
-
 
 export function StreamVod() {
   const { path } = useParams();
@@ -62,10 +62,7 @@ export function StreamVod() {
       .then(items => {
         chat.current = admins
       })
-    get7TVEmotes()
-      .then(items => {
-        emojiList.current = items
-      })
+
     loadVid()
   }, []);
 

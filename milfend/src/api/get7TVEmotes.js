@@ -1,5 +1,4 @@
 export function get7TVEmotes() {
-  return fetch('https://7tv.io/v2/users/nidas/emotes')
+  return fetch('http://localhost:3001/7tv')
     .then((response) => response.json())
 }
-
