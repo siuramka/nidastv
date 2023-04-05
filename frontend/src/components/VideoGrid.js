@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link'
 import { CardActionArea } from '@mui/material';
 import { Grid, List } from '@mui/material';
-import { VideoCard } from '../components/VideoCard'
+import { VideoCard } from './VideoCard'
 import React, { useEffect, useState } from 'react';
 import { getList } from '../api/getVideos'
 const apiUrl = "https://cloud.nidas.tv/thumb.php?vod="

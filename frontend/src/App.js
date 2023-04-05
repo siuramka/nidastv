@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { StreamVod } from './pages/StreamVod';
+import Home from './pages/Home';
 
 const darkTheme = createTheme({
   palette: {
@@ -25,7 +26,7 @@ export default function MyApp() {
     <ThemeProvider theme={darkTheme}>
         <Layout>
           <Routes>
-              <Route exact path="/" element={<VideoGrid/>}/>
+              <Route exact path="/" element={<Home/>}/>
               <Route path="*" element={<>none</>} />
               <Route path="/vod/:path" element={<StreamVod/>}/>
           </Routes>
